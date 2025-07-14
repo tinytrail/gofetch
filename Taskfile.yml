@@ -38,6 +38,11 @@ tasks:
     cmds:
       - go test -v ./...
 
+  test-integration:
+    desc: Run integration tests
+    cmds:
+      - ./test/integration-test.sh
+
   clean:
     desc: Clean the build directory
     cmds:
@@ -65,4 +70,10 @@ tasks:
       KO_DOCKER_REPO: ghcr.io/stackloklabs/gofetch/server
       VERSION: dev-local
     cmds:
-      - ko build --local --bare ./cmd/server
+      - |
+        if [[ $(uname -m) == "arm64" ]]; then
+          PLATFORM="linux/arm64"
+        else
+          PLATFORM="linux/amd64"
+        fi
+        ko build ./cmd/server --bare --local --platform=$PLATFORM
